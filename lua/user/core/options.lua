@@ -1,0 +1,25 @@
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
+
+local opt = vim.opt
+opt.autowrite = true
+opt.clipboard = "unnamedplus"
+opt.completeopt = "menu,menuone,noselect"
+opt.cursorline = true
+opt.encoding = "UTF-8"
+opt.expandtab = true
+opt.hlsearch = true
+opt.ignorecase = true
+opt.mouse = "a"
+opt.number = true
+opt.relativenumber = true
+opt.scrolloff = 8
+opt.shiftwidth = 2
+opt.smartcase = true
+opt.smartindent = true
+opt.splitbelow = true
+opt.splitright = true
+opt.tabstop = 2
+opt.termguicolors = true
+opt.timeoutlen = 300
+opt.undofile = true

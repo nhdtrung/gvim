@@ -1,4 +1,5 @@
 local keymap = vim.keymap.set
+local opts = { noremap = true, silent = true }
 
 -- Xóa highlight khi tìm kiếm
 keymap("n", "<Esc>", "<cmd>nohlsearch<CR>")

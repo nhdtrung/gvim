@@ -40,6 +40,14 @@ return {
 			vim.keymap.set("n", "<leader>sf", builtin.find_files, { desc = "[S]earch [F]iles" })
 			vim.keymap.set("n", "<leader>sg", builtin.live_grep, { desc = "[S]earch by [G]rep" })
 			vim.keymap.set("n", "<leader><leader>", builtin.buffers, { desc = "Find existing buffers" })
+      vim.keymap.set("n", "<leader>sn", function()
+        require("telescope.builtin").live_grep({
+          search_dirs = { "node_modules" },
+          additional_args = function()
+            return { "--no-ignore", "--hidden" }
+          end,
+        })
+      end, { desc = "[S]earch in [N]ode_modules" })
 		end,
 	},
 

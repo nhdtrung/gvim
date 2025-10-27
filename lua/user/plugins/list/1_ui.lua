@@ -21,10 +21,51 @@ return {
 		version = "*",
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 		config = function()
-			require("nvim-tree").setup({})
-			vim.keymap.set("n", "<leader>e", ":NvimTreeToggle<CR>", { desc = "Toggle file explorer" })
+			local ok, nvimtree = pcall(require, "nvim-tree")
+			if not ok then
+				return
+			end
+
+			nvimtree.setup({
+				-- tự đồng bộ/highlight file đang mở
+				update_focused_file = {
+					enable = true,
+					update_root = false, -- bật = true nếu muốn đổi root theo buffer hiện tại
+				},
+				filters = {
+					git_ignored = true, -- vẫn ẩn theo .gitignore
+					exclude = { "node_modules" }, -- 🔑 luôn hiện node_modules
+				},
+			})
+
+			local api = require("nvim-tree.api")
+
+			-- <leader>e: nếu tree đang mở thì đóng; nếu đang đóng thì mở & focus đúng file đang mở
+			vim.keymap.set("n", "<leader>e", function()
+				local view = require("nvim-tree.view")
+				if view.is_visible() then
+					api.tree.toggle()
+				else
+					api.tree.find_file({ open = true, focus = true })
+				end
+			end, { desc = "Reveal current file (smart toggle)" })
+
+			-- Tuỳ chọn: thêm <leader>E để luôn reveal + focus (kể cả đang mở)
+			vim.keymap.set("n", "<leader>E", function()
+				api.tree.find_file({ open = true, focus = true })
+			end, { desc = "Reveal current file (force)" })
 		end,
 	},
+
+	-- {
+	-- 	"nvim-tree/nvim-tree.lua",
+	-- 	version = "*",
+	-- 	dependencies = { "nvim-tree/nvim-web-devicons" },
+	-- 	config = function()
+	-- 		require("nvim-tree").setup({})
+	-- 		vim.keymap.set("n", "<leader>e", ":NvimTreeToggle<CR>", { desc = "Toggle file explorer" })
+	-- 	end,
+	-- },
 	{
 		"akinsho/bufferline.nvim",
 		version = "*",

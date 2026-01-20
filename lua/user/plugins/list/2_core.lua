@@ -95,38 +95,7 @@ return {
 		end,
 	},
 
-	-- GitHub Copilot - ĐÃ SỬA LỖI (Lần 2)
-	{
-		"zbirenbaum/copilot.lua",
-		cmd = "Copilot",
-		event = "InsertEnter",
-		config = function()
-			require("copilot").setup({
-				suggestion = {
-					auto_trigger = true,
-					-- Thêm một độ trễ nhỏ để tránh xung đột với nvim-treesitter
-					auto_trigger_delay = 150,
-					keymap = {
-						accept = "<C-l>",
-						next = "<C-j>",
-						prev = "<C-k>",
-						dismiss = "<C-h>",
-					},
-				},
-				panel = {
-					enabled = true,
-				},
-				filetypes = {
-					-- Tắt Copilot cho một số loại file đặc biệt để tránh lỗi.
-					NvimTree = false,
-					TelescopePrompt = false,
-					mason = false,
-				},
-			})
-		end,
-	},
-
-	-- Tự động hoàn thành (Autocomplete) - ĐÃ CẬP NHẬT
+	-- Tự động hoàn thành (Autocomplete)
 	{
 		"hrsh7th/nvim-cmp",
 		event = "InsertEnter",
@@ -134,14 +103,10 @@ return {
 			"hrsh7th/cmp-nvim-lsp",
 			"L3MON4D3/LuaSnip",
 			"saadparwaiz1/cmp_luasnip",
-			"zbirenbaum/copilot-cmp", -- Thêm dependency để tích hợp Copilot
 		},
 		config = function()
 			local cmp = require("cmp")
 			local luasnip = require("luasnip")
-
-			-- Cấu hình cho copilot-cmp
-			require("copilot_cmp").setup()
 
 			cmp.setup({
 				snippet = {
@@ -172,11 +137,9 @@ return {
 						end
 					end, { "i", "s" }),
 				}),
-				-- Thêm 'copilot' vào danh sách các nguồn gợi ý.
 				sources = cmp.config.sources({
 					{ name = "nvim_lsp" },
 					{ name = "luasnip" },
-					{ name = "copilot" }, -- Nguồn gợi ý từ Copilot
 				}, {
 					{ name = "buffer" },
 				}),

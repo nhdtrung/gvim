@@ -65,10 +65,8 @@ return {
 			require("mason").setup()
 			require("mason-lspconfig").setup({ automatic_installation = true })
 
-			local servers = { "lua_ls", "intelephense", "ts_ls", "lemminx" }
-			for _, server_name in ipairs(servers) do
-				require("lspconfig")[server_name].setup({ capabilities = capabilities })
-			end
+			vim.lsp.config("*", { capabilities = capabilities })
+			vim.lsp.enable({ "lua_ls", "intelephense", "ts_ls", "lemminx" })
 
 			vim.api.nvim_create_autocmd("LspAttach", {
 				group = vim.api.nvim_create_augroup("UserLspConfig", {}),
@@ -92,6 +90,50 @@ return {
 					vim.bo.shiftwidth = 4
 				end,
 			})
+		end,
+	},
+
+	-- CodeCompanion.nvim - AI Assistant với Claude
+	{
+		"olimorris/codecompanion.nvim",
+		version = "^18.0.0",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"nvim-treesitter/nvim-treesitter",
+		},
+		config = function()
+			require("codecompanion").setup({
+				adapters = {
+					anthropic = function()
+						return require("codecompanion.adapters").extend("anthropic", {
+							env = {
+								api_key = "ANTHROPIC_API_KEY",
+							},
+						})
+					end,
+				},
+				strategies = {
+					chat = {
+						adapter = "anthropic",
+					},
+					inline = {
+						adapter = "anthropic",
+					},
+				},
+			})
+
+			-- Phím tắt cho CodeCompanion
+			vim.keymap.set({ "n", "v" }, "<C-a>", "<cmd>CodeCompanionActions<cr>", { desc = "CodeCompanion Actions" })
+			vim.keymap.set(
+				{ "n", "v" },
+				"<LocalLeader>a",
+				"<cmd>CodeCompanionChat Toggle<cr>",
+				{ desc = "Toggle CodeCompanion Chat" }
+			)
+			vim.keymap.set("v", "ga", "<cmd>CodeCompanionChat Add<cr>", { desc = "Add to CodeCompanion Chat" })
+
+			-- Command abbreviation
+			vim.cmd([[cab cc CodeCompanion]])
 		end,
 	},
 

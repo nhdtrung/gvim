@@ -6,6 +6,22 @@
 
 ---
 
+## ⚡ Quick 1-Command Automated Install
+
+Choose the command matching your operating system to automatically install Neovim, dependencies, clone the config, and bootstrap plugins:
+
+### Linux (Ubuntu 22.04 / 24.04 / Debian) & macOS (Apple Silicon M1/M2/M3/M4 & Intel)
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/nhdtrung/gvim/main/install.sh)"
+```
+
+### Windows 11 (PowerShell)
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://raw.githubusercontent.com/nhdtrung/gvim/main/install.ps1 | iex"
+```
+
+---
+
 ## 📋 Prerequisites
 
 - **Neovim >= 0.11.0** (Recommended **v0.12+** as this config leverages modern `vim.lsp.config` and `vim.lsp.enable` APIs).
@@ -22,125 +38,129 @@
 
 ---
 
-## 🚀 Installation & Setup
+## 💻 Manual Setup Guides by Platform
 
-### Step 1: Install Neovim (v0.11+)
+If you prefer to run commands manually instead of using the automated script, follow the guide for your system below:
 
-#### Linux (Ubuntu / Debian / etc.)
-Default APT repositories often package older versions (e.g., v0.9.x). Install the latest official prebuilt binary:
+### 🍏 macOS (M1 / Apple Silicon & Intel)
 
-```bash
-# Download and unpack official Neovim x86_64 release
-curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
-tar -C ~/.local -xzf nvim-linux-x86_64.tar.gz
-ln -sf ~/.local/nvim-linux-x86_64/bin/nvim ~/.local/bin/nvim
-rm nvim-linux-x86_64.tar.gz
-
-# Ensure ~/.local/bin is in your $PATH (add to ~/.bashrc or ~/.zshrc if not already present):
-export PATH="$HOME/.local/bin:$PATH"
-```
-
-#### macOS (Homebrew)
-```bash
-brew install neovim
-```
-
-Verify your installed version:
-```bash
-nvim --version
-# Should output NVIM v0.11.x or v0.12.x
-```
-
----
-
-### Step 2: Install System Dependencies
-
-#### Ubuntu / Debian:
-```bash
-# Install build tools, ripgrep, python, nodejs, unzip
-sudo apt update
-sudo apt install -y git curl gcc make ripgrep unzip python3 python3-pip nodejs npm
-
-# Install fd (named 'fd-find' on Ubuntu/Debian)
-sudo apt install -y fd-find
-mkdir -p ~/.local/bin
-ln -sf $(which fdfind) ~/.local/bin/fd
-```
-
-#### macOS:
-```bash
-brew install ripgrep fd nodejs
-```
-
----
-
-### Step 3: Backup Existing Configuration & Clone
-
-```bash
-# Backup existing Neovim configs (if any)
-mv ~/.config/nvim ~/.config/nvim.bak 2>/dev/null
-mv ~/.local/share/nvim ~/.local/share/nvim.bak 2>/dev/null
-mv ~/.local/state/nvim ~/.local/state/nvim.bak 2>/dev/null
-mv ~/.cache/nvim ~/.cache/nvim.bak 2>/dev/null
-
-# Clone repository into ~/.config/nvim
-git clone https://github.com/nhdtrung/gvim.git ~/.config/nvim
-```
-
----
-
-### Step 4: Launch Neovim & Sync Plugins
-
-Launch Neovim:
-```bash
-nvim
-```
-- `lazy.nvim` will automatically bootstrap and install all configured plugins.
-- Once finished, press `q` to close the Lazy status window.
-
----
-
-### Step 5: Install LSP Servers & Formatters via Mason
-
-This setup pre-configures the following Language Servers and Formatters:
-- **LSP Servers**: `lua_ls`, `ts_ls`, `intelephense`, `lemminx`
-- **Formatters**: `stylua`, `prettierd`, `php-cs-fixer`
-
-To install them all at once, open Neovim and run:
-```vim
-:MasonInstall lua-language-server typescript-language-server intelephense lemminx stylua prettierd
-```
-*(Or run `:Mason` to open the interactive UI).*
-
----
-
-### Step 6: Configure AI Assistant (CodeCompanion - Claude)
-
-The configuration uses [CodeCompanion.nvim](https://github.com/olimorris/codecompanion.nvim) powered by Anthropic's Claude.
-
-1. Obtain an API key from the [Anthropic Console](https://console.anthropic.com/).
-2. Add the environment variable to your shell profile (`~/.bashrc` or `~/.zshrc`):
+1. **Install tools and Neovim via Homebrew**:
    ```bash
-   export ANTHROPIC_API_KEY="sk-ant-api..."
+   brew install neovim ripgrep fd nodejs git
    ```
-3. Reload your shell configuration (`source ~/.bashrc`) or restart your terminal.
+
+2. **Backup old configuration (if any)**:
+   ```bash
+   mv ~/.config/nvim ~/.config/nvim.bak 2>/dev/null
+   mv ~/.local/share/nvim ~/.local/share/nvim.bak 2>/dev/null
+   ```
+
+3. **Clone the repository**:
+   ```bash
+   git clone https://github.com/nhdtrung/gvim.git ~/.config/nvim
+   ```
+
+4. **Initialize plugins & LSP tools**:
+   ```bash
+   nvim --headless "+Lazy! sync" +qa
+   nvim --headless -c "MasonInstall lua-language-server typescript-language-server intelephense lemminx stylua prettierd" -c "sleep 5" -c "qa"
+   ```
 
 ---
 
-### Step 7: Run Healthcheck
+### 🐧 Ubuntu 22.04 LTS (and newer Debian/Ubuntu)
 
-Verify that all dependencies, LSP servers, and plugins are properly configured:
-```vim
-:checkhealth
-```
+> [!NOTE]
+> Ubuntu 22.04's default APT repository provides Neovim v0.6.8, which is too old. We install the official prebuilt binary (v0.12+) to `~/.local/bin`.
+
+1. **Install system dependencies**:
+   ```bash
+   sudo apt update
+   sudo apt install -y git curl gcc make ripgrep fd-find unzip python3 python3-pip nodejs npm
+   
+   # Setup fd symlink (Ubuntu packages it as fdfind)
+   mkdir -p ~/.local/bin
+   ln -sf $(which fdfind) ~/.local/bin/fd
+   ```
+
+2. **Install latest official Neovim binary (x86_64)**:
+   ```bash
+   curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
+   tar -C ~/.local -xzf nvim-linux-x86_64.tar.gz
+   ln -sf ~/.local/nvim-linux-x86_64/bin/nvim ~/.local/bin/nvim
+   rm nvim-linux-x86_64.tar.gz
+
+   # Ensure ~/.local/bin is in PATH:
+   export PATH="$HOME/.local/bin:$PATH"
+   echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+   ```
+   *(For ARM64 Linux, use `nvim-linux-arm64.tar.gz` instead).*
+
+3. **Clone configuration**:
+   ```bash
+   mv ~/.config/nvim ~/.config/nvim.bak 2>/dev/null
+   git clone https://github.com/nhdtrung/gvim.git ~/.config/nvim
+   ```
+
+4. **Sync plugins & Mason tools**:
+   ```bash
+   nvim --headless "+Lazy! sync" +qa
+   nvim --headless -c "MasonInstall lua-language-server typescript-language-server intelephense lemminx stylua prettierd" -c "sleep 5" -c "qa"
+   ```
+
+---
+
+### 🪟 Windows 11 (PowerShell)
+
+1. **Install packages using `winget`**:
+   ```powershell
+   winget install --id Neovim.Neovim -e
+   winget install --id BurntSushi.ripgrep.MSVC -e
+   winget install --id sharkdp.fd -e
+   winget install --id OpenJS.NodeJS.LTS -e
+   winget install --id Git.Git -e
+   ```
+
+2. **Backup old config (if any) & clone**:
+   ```powershell
+   if (Test-Path "$env:LOCALAPPDATA\nvim") {
+       Move-Item "$env:LOCALAPPDATA\nvim" "$env:LOCALAPPDATA\nvim.bak"
+   }
+   git clone https://github.com/nhdtrung/gvim.git "$env:LOCALAPPDATA\nvim"
+   ```
+
+3. **Sync plugins & Mason tools**:
+   ```powershell
+   nvim --headless "+Lazy! sync" +qa
+   nvim --headless -c "MasonInstall lua-language-server typescript-language-server intelephense lemminx stylua prettierd" -c "sleep 5" -c "qa"
+   ```
+
+---
+
+## 🤖 AI Assistant Configuration (CodeCompanion - Claude)
+
+The configuration uses [CodeCompanion.nvim](https://github.com/olimorris/codecompanion.nvim) with Claude (Anthropic).
+
+1. Get an API key from the [Anthropic Console](https://console.anthropic.com/).
+2. Add your key to your environment:
+   - **Linux/macOS (`~/.bashrc` or `~/.zshrc`)**:
+     ```bash
+     export ANTHROPIC_API_KEY="sk-ant-api..."
+     ```
+   - **Windows 11 (PowerShell)**:
+     ```powershell
+     [System.Environment]::SetEnvironmentVariable("ANTHROPIC_API_KEY", "sk-ant-api...", "User")
+     ```
 
 ---
 
 ## 📂 Directory Structure
 
 ```
-~/.config/nvim/
+~/.config/nvim/ (or %LOCALAPPDATA%\nvim on Windows)
 ├── init.lua          -- Main entry point (loads options, keymaps, plugins)
+├── install.sh        -- Automated setup script (Linux & macOS)
+├── install.ps1       -- Automated setup script (Windows 11)
 ├── CLAUDE.md         -- Project architecture & guidance for AI assistants
 └── lua/
     └── user/

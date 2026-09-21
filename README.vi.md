@@ -6,6 +6,22 @@
 
 ---
 
+## ⚡ Cài đặt nhanh bằng 1 lệnh (Automated Install)
+
+Chỉ cần chọn lệnh tương ứng với hệ điều hành của bạn, script sẽ tự động cài đặt Neovim, dependencies, clone cấu hình và khởi tạo toàn bộ plugins:
+
+### Linux (Ubuntu 22.04 / 24.04 / Debian) & macOS (Apple Silicon M1/M2/M3/M4 & Intel)
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/nhdtrung/gvim/main/install.sh)"
+```
+
+### Windows 11 (PowerShell)
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://raw.githubusercontent.com/nhdtrung/gvim/main/install.ps1 | iex"
+```
+
+---
+
 ## 📋 Yêu cầu hệ thống (Prerequisites)
 
 - **Neovim >= 0.11.0** (Khuyến nghị **v0.12+** do cấu hình sử dụng API `vim.lsp.config` và `vim.lsp.enable` mới).
@@ -22,125 +38,129 @@
 
 ---
 
-## 🚀 Hướng dẫn cài đặt (Installation & Setup)
+## 💻 Hướng dẫn cài đặt thủ công theo từng hệ điều hành
 
-### Bước 1: Cài đặt Neovim (v0.11+)
+Nếu bạn muốn tự chạy từng lệnh thay vì dùng script tự động, hãy làm theo hướng dẫn tương ứng dưới đây:
 
-#### Trên Linux (Ubuntu / Debian / v.v.)
-Gói `neovim` trong kho APT mặc định của Ubuntu thường là phiên bản cũ (v0.9.x). Bạn nên cài bản prebuilt mới nhất:
+### 🍏 macOS (M1 / Apple Silicon & Intel)
 
-```bash
-# Tải và giải nén bản phát hành Neovim binary x86_64
-curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
-tar -C ~/.local -xzf nvim-linux-x86_64.tar.gz
-ln -sf ~/.local/nvim-linux-x86_64/bin/nvim ~/.local/bin/nvim
-rm nvim-linux-x86_64.tar.gz
-
-# Đảm bảo ~/.local/bin nằm trong $PATH (thêm vào ~/.bashrc hoặc ~/.zshrc nếu chưa có):
-export PATH="$HOME/.local/bin:$PATH"
-```
-
-#### Trên macOS (Homebrew)
-```bash
-brew install neovim
-```
-
-Kiểm tra phiên bản Neovim đã cài:
-```bash
-nvim --version
-# Kết quả hiển thị NVIM v0.11.x hoặc v0.12.x là đạt yêu cầu
-```
-
----
-
-### Bước 2: Cài đặt các công cụ phụ trợ (Dependencies)
-
-#### Trên Ubuntu / Debian:
-```bash
-# Cài đặt build tools, ripgrep, python, nodejs, unzip
-sudo apt update
-sudo apt install -y git curl gcc make ripgrep unzip python3 python3-pip nodejs npm
-
-# Cài đặt fd (trên Ubuntu gói có tên là fd-find)
-sudo apt install -y fd-find
-mkdir -p ~/.local/bin
-ln -sf $(which fdfind) ~/.local/bin/fd
-```
-
-#### Trên macOS:
-```bash
-brew install ripgrep fd nodejs
-```
-
----
-
-### Bước 3: Sao lưu config cũ (nếu có) và clone repo
-
-```bash
-# Sao lưu cấu hình Neovim cũ nếu đã có
-mv ~/.config/nvim ~/.config/nvim.bak 2>/dev/null
-mv ~/.local/share/nvim ~/.local/share/nvim.bak 2>/dev/null
-mv ~/.local/state/nvim ~/.local/state/nvim.bak 2>/dev/null
-mv ~/.cache/nvim ~/.cache/nvim.bak 2>/dev/null
-
-# Clone repository về thư mục cấu hình
-git clone https://github.com/nhdtrung/gvim.git ~/.config/nvim
-```
-
----
-
-### Bước 4: Khởi động Neovim & Cài đặt Plugin
-
-Khởi động Neovim:
-```bash
-nvim
-```
-- Trình quản lý `lazy.nvim` sẽ tự động tải về và thiết lập toàn bộ các plugin trong danh sách.
-- Sau khi quá trình tải hoàn tất, bạn có thể bấm phím `q` để đóng cửa sổ thông báo của Lazy.
-
----
-
-### Bước 5: Cài đặt LSP Servers & Formatters qua Mason
-
-Cấu hình đã thiết lập sẵn các Language Server và Formatter chính:
-- **LSP Servers**: `lua_ls`, `ts_ls`, `intelephense`, `lemminx`
-- **Formatters**: `stylua`, `prettierd`, `php-cs-fixer`
-
-Để cài đặt trước tất cả, mở Neovim và chạy lệnh:
-```vim
-:MasonInstall lua-language-server typescript-language-server intelephense lemminx stylua prettierd
-```
-*(Hoặc nhập `:Mason` để mở giao diện quản lý đồ họa và cài thêm server bạn cần).*
-
----
-
-### Bước 6: Cấu hình AI Assistant (CodeCompanion - Claude)
-
-Cấu hình tích hợp [CodeCompanion.nvim](https://github.com/olimorris/codecompanion.nvim) sử dụng API của Claude (Anthropic).
-
-1. Đăng ký và tạo API Key tại [Anthropic Console](https://console.anthropic.com/).
-2. Thêm biến môi trường vào shell configuration (`~/.bashrc` hoặc `~/.zshrc`):
+1. **Cài đặt Neovim và công cụ phụ trợ qua Homebrew**:
    ```bash
-   export ANTHROPIC_API_KEY="sk-ant-api..."
+   brew install neovim ripgrep fd nodejs git
    ```
-3. Nạp lại cấu hình shell (`source ~/.bashrc`) hoặc khởi động lại terminal trước khi mở Neovim.
+
+2. **Sao lưu cấu hình cũ (nếu có)**:
+   ```bash
+   mv ~/.config/nvim ~/.config/nvim.bak 2>/dev/null
+   mv ~/.local/share/nvim ~/.local/share/nvim.bak 2>/dev/null
+   ```
+
+3. **Clone repository**:
+   ```bash
+   git clone https://github.com/nhdtrung/gvim.git ~/.config/nvim
+   ```
+
+4. **Khởi tạo plugin & LSP server**:
+   ```bash
+   nvim --headless "+Lazy! sync" +qa
+   nvim --headless -c "MasonInstall lua-language-server typescript-language-server intelephense lemminx stylua prettierd" -c "sleep 5" -c "qa"
+   ```
 
 ---
 
-### Bước 7: Kiểm tra tình trạng hoạt động (Healthcheck)
+### 🐧 Ubuntu 22.04 LTS (và các bản Debian/Ubuntu mới hơn)
 
-Chạy lệnh kiểm tra trong Neovim để đảm bảo tất cả các thành phần hoạt động trơn tru:
-```vim
-:checkhealth
-```
+> [!NOTE]
+> APT mặc định của Ubuntu 22.04 chỉ có Neovim v0.6.8 (quá cũ). Chúng ta sẽ cài bản prebuilt chính thức mới nhất (v0.12+) vào `~/.local/bin`.
+
+1. **Cài đặt dependencies hệ thống**:
+   ```bash
+   sudo apt update
+   sudo apt install -y git curl gcc make ripgrep fd-find unzip python3 python3-pip nodejs npm
+
+   # Tạo symlink cho fd (Ubuntu đặt tên gói là fdfind)
+   mkdir -p ~/.local/bin
+   ln -sf $(which fdfind) ~/.local/bin/fd
+   ```
+
+2. **Tải và cài đặt Neovim binary mới nhất (x86_64)**:
+   ```bash
+   curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
+   tar -C ~/.local -xzf nvim-linux-x86_64.tar.gz
+   ln -sf ~/.local/nvim-linux-x86_64/bin/nvim ~/.local/bin/nvim
+   rm nvim-linux-x86_64.tar.gz
+
+   # Đảm bảo ~/.local/bin có trong PATH:
+   export PATH="$HOME/.local/bin:$PATH"
+   echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+   ```
+   *(Đối với Linux kiến trúc ARM64, thay bằng `nvim-linux-arm64.tar.gz`).*
+
+3. **Clone repository**:
+   ```bash
+   mv ~/.config/nvim ~/.config/nvim.bak 2>/dev/null
+   git clone https://github.com/nhdtrung/gvim.git ~/.config/nvim
+   ```
+
+4. **Khởi tạo plugin & LSP server**:
+   ```bash
+   nvim --headless "+Lazy! sync" +qa
+   nvim --headless -c "MasonInstall lua-language-server typescript-language-server intelephense lemminx stylua prettierd" -c "sleep 5" -c "qa"
+   ```
+
+---
+
+### 🪟 Windows 11 (PowerShell)
+
+1. **Cài đặt các gói công cụ qua `winget`**:
+   ```powershell
+   winget install --id Neovim.Neovim -e
+   winget install --id BurntSushi.ripgrep.MSVC -e
+   winget install --id sharkdp.fd -e
+   winget install --id OpenJS.NodeJS.LTS -e
+   winget install --id Git.Git -e
+   ```
+
+2. **Sao lưu cấu hình cũ & clone repository**:
+   ```powershell
+   if (Test-Path "$env:LOCALAPPDATA\nvim") {
+       Move-Item "$env:LOCALAPPDATA\nvim" "$env:LOCALAPPDATA\nvim.bak"
+   }
+   git clone https://github.com/nhdtrung/gvim.git "$env:LOCALAPPDATA\nvim"
+   ```
+
+3. **Khởi tạo plugin & LSP server**:
+   ```powershell
+   nvim --headless "+Lazy! sync" +qa
+   nvim --headless -c "MasonInstall lua-language-server typescript-language-server intelephense lemminx stylua prettierd" -c "sleep 5" -c "qa"
+   ```
+
+---
+
+## 🤖 Thiết lập AI Assistant (CodeCompanion - Claude)
+
+Cấu hình tích hợp [CodeCompanion.nvim](https://github.com/olimorris/codecompanion.nvim) sử dụng Claude (Anthropic).
+
+1. Lấy API key tại [Anthropic Console](https://console.anthropic.com/).
+2. Thêm biến môi trường:
+   - **Linux/macOS (`~/.bashrc` hoặc `~/.zshrc`)**:
+     ```bash
+     export ANTHROPIC_API_KEY="sk-ant-api..."
+     ```
+   - **Windows 11 (PowerShell)**:
+     ```powershell
+     [System.Environment]::SetEnvironmentVariable("ANTHROPIC_API_KEY", "sk-ant-api...", "User")
+     ```
 
 ---
 
 ## 📂 Cấu trúc thư mục
 
 ```
-~/.config/nvim/
+~/.config/nvim/ (hoặc %LOCALAPPDATA%\nvim trên Windows)
 ├── init.lua          -- File khởi động chính, chỉ gọi các module khác
+├── install.sh        -- Script cài đặt tự động (Linux & macOS)
+├── install.ps1       -- Script cài đặt tự động (Windows 11)
 ├── CLAUDE.md         -- Hướng dẫn kiến trúc và phát triển
 └── lua/
     └── user/

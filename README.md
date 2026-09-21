@@ -1,123 +1,262 @@
-# Neovim Config
+# Neovim Config (GVim)
 
-## Cấu trúc thư mục
+[English](README.md) | [Tiếng Việt](README.vi.md)
+
+> Modern Neovim configuration extended from `nvim-kickstart`, tailored for full-stack development (PHP, JavaScript/TypeScript, Lua, XML, etc.), featuring an AI Assistant (CodeCompanion with Claude), LSP, Auto-formatting, and Fuzzy Finding.
+
+---
+
+## 📋 Prerequisites
+
+- **Neovim >= 0.11.0** (Recommended **v0.12+** as this config leverages modern `vim.lsp.config` and `vim.lsp.enable` APIs).
+- **Git** (for plugin management and repo cloning).
+- **C/C++ Compiler & Make**: `gcc`, `make` (for compiling Treesitter parsers and `telescope-fzf-native`).
+- **Search Utilities**:
+  - `ripgrep` (`rg`)
+  - `fd` (or `fdfind`)
+- **Runtimes**:
+  - `Node.js` (>= 20) & `npm` (required by Mason for TypeScript LSP, Prettierd, etc.)
+  - `Python 3` & `pip`
+- **Unzip** (for extracting language server archives like LemMinX)
+- *(Recommended)* **Nerd Font** (for file icons in `nvim-tree`, `bufferline`, etc.)
+
+---
+
+## 🚀 Installation & Setup
+
+### Step 1: Install Neovim (v0.11+)
+
+#### Linux (Ubuntu / Debian / etc.)
+Default APT repositories often package older versions (e.g., v0.9.x). Install the latest official prebuilt binary:
+
+```bash
+# Download and unpack official Neovim x86_64 release
+curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
+tar -C ~/.local -xzf nvim-linux-x86_64.tar.gz
+ln -sf ~/.local/nvim-linux-x86_64/bin/nvim ~/.local/bin/nvim
+rm nvim-linux-x86_64.tar.gz
+
+# Ensure ~/.local/bin is in your $PATH (add to ~/.bashrc or ~/.zshrc if not already present):
+export PATH="$HOME/.local/bin:$PATH"
+```
+
+#### macOS (Homebrew)
+```bash
+brew install neovim
+```
+
+Verify your installed version:
+```bash
+nvim --version
+# Should output NVIM v0.11.x or v0.12.x
+```
+
+---
+
+### Step 2: Install System Dependencies
+
+#### Ubuntu / Debian:
+```bash
+# Install build tools, ripgrep, python, nodejs, unzip
+sudo apt update
+sudo apt install -y git curl gcc make ripgrep unzip python3 python3-pip nodejs npm
+
+# Install fd (named 'fd-find' on Ubuntu/Debian)
+sudo apt install -y fd-find
+mkdir -p ~/.local/bin
+ln -sf $(which fdfind) ~/.local/bin/fd
+```
+
+#### macOS:
+```bash
+brew install ripgrep fd nodejs
+```
+
+---
+
+### Step 3: Backup Existing Configuration & Clone
+
+```bash
+# Backup existing Neovim configs (if any)
+mv ~/.config/nvim ~/.config/nvim.bak 2>/dev/null
+mv ~/.local/share/nvim ~/.local/share/nvim.bak 2>/dev/null
+mv ~/.local/state/nvim ~/.local/state/nvim.bak 2>/dev/null
+mv ~/.cache/nvim ~/.cache/nvim.bak 2>/dev/null
+
+# Clone repository into ~/.config/nvim
+git clone https://github.com/nhdtrung/gvim.git ~/.config/nvim
+```
+
+---
+
+### Step 4: Launch Neovim & Sync Plugins
+
+Launch Neovim:
+```bash
+nvim
+```
+- `lazy.nvim` will automatically bootstrap and install all configured plugins.
+- Once finished, press `q` to close the Lazy status window.
+
+---
+
+### Step 5: Install LSP Servers & Formatters via Mason
+
+This setup pre-configures the following Language Servers and Formatters:
+- **LSP Servers**: `lua_ls`, `ts_ls`, `intelephense`, `lemminx`
+- **Formatters**: `stylua`, `prettierd`, `php-cs-fixer`
+
+To install them all at once, open Neovim and run:
+```vim
+:MasonInstall lua-language-server typescript-language-server intelephense lemminx stylua prettierd
+```
+*(Or run `:Mason` to open the interactive UI).*
+
+---
+
+### Step 6: Configure AI Assistant (CodeCompanion - Claude)
+
+The configuration uses [CodeCompanion.nvim](https://github.com/olimorris/codecompanion.nvim) powered by Anthropic's Claude.
+
+1. Obtain an API key from the [Anthropic Console](https://console.anthropic.com/).
+2. Add the environment variable to your shell profile (`~/.bashrc` or `~/.zshrc`):
+   ```bash
+   export ANTHROPIC_API_KEY="sk-ant-api..."
+   ```
+3. Reload your shell configuration (`source ~/.bashrc`) or restart your terminal.
+
+---
+
+### Step 7: Run Healthcheck
+
+Verify that all dependencies, LSP servers, and plugins are properly configured:
+```vim
+:checkhealth
+```
+
+---
+
+## 📂 Directory Structure
 
 ```
 ~/.config/nvim/
-├── init.lua          -- File khởi động chính, chỉ gọi các module khác
+├── init.lua          -- Main entry point (loads options, keymaps, plugins)
+├── CLAUDE.md         -- Project architecture & guidance for AI assistants
 └── lua/
     └── user/
         ├── core/
-        │   ├── options.lua -- Các tùy chỉnh `vim.opt` cơ bản
-        │   └── keymaps.lua -- Các phím tắt toàn cục
+        │   ├── options.lua -- Core `vim.opt` settings
+        │   └── keymaps.lua -- Global keymaps
         └── plugins/
-            ├── config.lua      -- File setup chính của lazy.nvim
-            └── list/           -- Thư mục chứa các file cấu hình plugin
-                ├── 1_ui.lua    -- Các plugin về giao diện (theme, cây thư mục)
-                ├── 2_core.lua  -- Các plugin chức năng cốt lõi (LSP, format, tìm kiếm)
-                └── 3_utils.lua -- Các plugin tiện ích khác (git, treesitter)
+            ├── config.lua      -- lazy.nvim bootstrap & configuration
+            └── list/           -- Plugin specifications (auto-loaded)
+                ├── 1_ui.lua    -- UI plugins (theme, file tree, bufferline, which-key)
+                ├── 2_core.lua  -- Core plugins (LSP, formatters, telescope, autocomplete, AI)
+                └── 3_utils.lua -- Utilities (git signs, treesitter, text-objects)
 ```
 
 ---
 
-## Plugins đã cài
+## 🔌 Installed Plugins
 
 ### UI (`1_ui.lua`)
 
-| Plugin | Mô tả |
-|--------|-------|
-| `folke/tokyonight.nvim` | Color scheme — dùng variant `tokyonight-night` |
-| `nvim-tree/nvim-tree.lua` | Cây thư mục bên trái, tự highlight file đang mở, hiện `node_modules` |
-| `akinsho/bufferline.nvim` | Thanh tab buffer phía trên, hỗ trợ đóng/chuyển buffer |
-| `folke/which-key.nvim` | Popup gợi ý phím tắt khi nhấn leader |
+| Plugin | Description |
+|--------|-------------|
+| `folke/tokyonight.nvim` | Theme / Color scheme — uses `tokyonight-night` variant |
+| `nvim-tree/nvim-tree.lua` | File explorer with current file reveal & `node_modules` visibility |
+| `akinsho/bufferline.nvim` | Buffer tabs header with navigation and close support |
+| `folke/which-key.nvim` | Interactive keybinding cheat-sheet popup on `<leader>` |
 
 ### Core (`2_core.lua`)
 
-| Plugin | Mô tả |
-|--------|-------|
+| Plugin | Description |
+|--------|-------------|
 | `stevearc/conform.nvim` | Format on save — stylua (Lua), php_cs_fixer (PHP), prettierd (JS/TS/XML) |
-| `nvim-telescope/telescope.nvim` | Fuzzy finder — tìm file, grep, buffer |
-| `neovim/nvim-lspconfig` + Mason | LSP tự động cài qua Mason: `lua_ls`, `intelephense`, `ts_ls`, `lemminx` |
-| `hrsh7th/nvim-cmp` | Autocomplete với snippet (LuaSnip) và LSP source |
-| `olimorris/codecompanion.nvim` | AI assistant dùng Claude (Anthropic) — chat buffer & inline generation |
+| `nvim-telescope/telescope.nvim` | Fuzzy finder — search files, live grep, buffers |
+| `neovim/nvim-lspconfig` + Mason | LSP management & config: `lua_ls`, `intelephense`, `ts_ls`, `lemminx` |
+| `hrsh7th/nvim-cmp` | Autocompletion engine with LuaSnip snippets & LSP source |
+| `olimorris/codecompanion.nvim` | AI assistant with Claude (Anthropic) — chat buffer & inline generation |
 
-### Utils (`3_utils.lua`)
+### Utilities (`3_utils.lua`)
 
-| Plugin | Mô tả |
-|--------|-------|
-| `lewis6991/gitsigns.nvim` | Git diff signs trong gutter (thêm/sửa/xóa dòng) |
-| `echasnovski/mini.nvim` | `mini.surround` (wrap/unwrap text objects) + `mini.ai` (mở rộng text objects) |
-| `nvim-treesitter/nvim-treesitter` | Syntax highlight và indent dựa trên AST cho Lua, PHP, JS, HTML, XML... |
+| Plugin | Description |
+|--------|-------------|
+| `lewis6991/gitsigns.nvim` | Git status signs in signcolumn (add, change, delete) |
+| `echasnovski/mini.nvim` | `mini.surround` (surround operators) + `mini.ai` (extended text-objects) |
+| `nvim-treesitter/nvim-treesitter` | Fast syntax highlighting & AST-based indentation |
 
 ---
 
-## Phím tắt
+## ⌨️ Keybindings
+
+> **Leader Key**: `<Space>` | **Local Leader**: `<Space>`
 
 ### File Explorer (nvim-tree)
 
-| Phím | Tác dụng |
-|------|----------|
-| `<leader>e` | Mở tree & reveal file hiện tại (nếu đang mở thì đóng) |
-| `<leader>E` | Luôn reveal & focus file hiện tại trong tree |
-| `<C-\>` | Reveal file hiện tại trong tree |
+| Key | Action |
+|-----|--------|
+| `<leader>e` | Open file tree & reveal current file (toggle close if open) |
+| `<leader>E` | Always reveal & focus current file in tree |
+| `<C-\>` | Reveal current file in tree |
 
-### Buffer
+### Buffers
 
-| Phím | Tác dụng |
-|------|----------|
-| `<Tab>` | Sang buffer kế tiếp |
-| `<S-Tab>` | Về buffer trước |
-| `,x` | Sang buffer kế tiếp (alternative) |
-| `,z` | Về buffer trước (alternative) |
-| `<leader>c` | Đóng buffer hiện tại |
+| Key | Action |
+|-----|--------|
+| `<Tab>` | Next buffer |
+| `<S-Tab>` | Previous buffer |
+| `,x` | Next buffer (alternative) |
+| `,z` | Previous buffer (alternative) |
+| `<leader>c` | Close current buffer |
 
 ### Telescope (Fuzzy Finder)
 
-| Phím | Tác dụng |
-|------|----------|
-| `<leader>sf` | Tìm file |
-| `<leader>sg` | Live grep toàn project |
-| `<leader><leader>` | Tìm trong các buffer đang mở |
-| `<leader>sn` | Live grep trong `node_modules` |
+| Key | Action |
+|-----|--------|
+| `<leader>sf` | Search files by name |
+| `<leader>sg` | Live grep project-wide |
+| `<leader><leader>` | Search open buffers |
+| `<leader>sn` | Live grep inside `node_modules` |
 
-### LSP (khi attach vào buffer)
+### LSP (when attached to buffer)
 
-| Phím | Tác dụng |
-|------|----------|
-| `gd` | Goto definition |
-| `gr` | Goto references |
+| Key | Action |
+|-----|--------|
+| `gd` | Go to definition |
+| `gr` | Go to references |
 | `K` | Hover documentation |
 | `<leader>ca` | Code action |
 
-### Format
+### Formatting
 
-| Phím | Tác dụng |
-|------|----------|
-| `<leader>f` | Format file hoặc vùng chọn (normal/visual) |
+| Key | Action |
+|-----|--------|
+| `<leader>f` | Format file or visual selection |
 
-### Window
+### Windows & Splits
 
-| Phím | Tác dụng |
-|------|----------|
-| `<C-h/j/k/l>` | Di chuyển focus giữa các split |
-| `vv` | Split dọc |
-| `ss` | Split ngang |
+| Key | Action |
+|-----|--------|
+| `<C-h/j/k/l>` | Navigate focus between splits |
+| `vv` | Vertical split |
+| `ss` | Horizontal split |
 
 ### CodeCompanion (AI Assistant)
 
-| Phím | Tác dụng |
-|------|----------|
-| `<C-a>` | Mở action palette |
+| Key | Action |
+|-----|--------|
+| `<C-a>` | Open CodeCompanion action palette |
 | `<leader>a` | Toggle chat buffer |
-| `ga` (visual) | Thêm vùng chọn vào chat |
-| `:cc` | Shortcut cho `:CodeCompanion` |
-| `<C-s>` (insert, trong chat) | Gửi message |
-| `<CR>` (normal, trong chat) | Gửi message |
+| `ga` (visual) | Add visual selection to chat |
+| `:cc` | Command shortcut for `:CodeCompanion` |
+| `<C-s>` (insert, in chat) | Submit message |
+| `<CR>` (normal, in chat) | Submit message |
 
 ### Debugging (nvim-dap)
 
-| Phím | Tác dụng |
-|------|----------|
+| Key | Action |
+|-----|--------|
 | `<F3>` | Toggle breakpoint |
 | `<F5>` | Continue |
 | `<F6>` | Terminate |
@@ -126,12 +265,12 @@
 | `<F9>` | Step out |
 | `<F10>` | Run to cursor |
 | `<leader>dc` | Toggle DAP UI |
-| `<leader>di` | Hover (xem giá trị biến) |
-| `<leader>dr` | Mở REPL |
+| `<leader>di` | Hover (inspect variable value) |
+| `<leader>dr` | Open REPL |
 
-### Misc
+### Miscellaneous
 
-| Phím | Tác dụng |
-|------|----------|
-| `jk` (insert) | Thoát về normal mode |
-| `<Esc>` / `//` | Xóa highlight tìm kiếm |
+| Key | Action |
+|-----|--------|
+| `jk` (insert mode) | Fast exit to normal mode |
+| `<Esc>` / `//` | Clear search highlighting |

@@ -208,6 +208,7 @@ Cấu hình tích hợp [CodeCompanion.nvim](https://github.com/olimorris/codeco
 | `lewis6991/gitsigns.nvim` | Git diff signs trong gutter (thêm/sửa/xóa dòng) |
 | `echasnovski/mini.nvim` | `mini.surround` (wrap/unwrap text objects) + `mini.ai` (mở rộng text objects) |
 | `nvim-treesitter/nvim-treesitter` | Syntax highlight và indent dựa trên AST cho Lua, PHP, JS, HTML, XML... |
+| `MeanderingProgrammer/render-markdown.nvim` | Render Markdown ngay trong buffer (heading, danh sách, code block, bảng) cho file `markdown` và chat CodeCompanion |
 
 ---
 
@@ -290,6 +291,12 @@ Cấu hình tích hợp [CodeCompanion.nvim](https://github.com/olimorris/codeco
 | `<leader>dc` | Toggle DAP UI |
 | `<leader>di` | Hover (xem giá trị biến) |
 | `<leader>dr` | Mở REPL |
+
+### Markdown
+
+| Phím | Tác dụng |
+|------|----------|
+| `<leader>mp` | Bật/tắt xem trước Markdown trong buffer (mặc định bật khi mở file `.md`) |
 
 ### Misc
 

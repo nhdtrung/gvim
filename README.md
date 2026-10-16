@@ -208,6 +208,7 @@ The configuration uses [CodeCompanion.nvim](https://github.com/olimorris/codecom
 | `lewis6991/gitsigns.nvim` | Git status signs in signcolumn (add, change, delete) |
 | `echasnovski/mini.nvim` | `mini.surround` (surround operators) + `mini.ai` (extended text-objects) |
 | `nvim-treesitter/nvim-treesitter` | Fast syntax highlighting & AST-based indentation |
+| `MeanderingProgrammer/render-markdown.nvim` | Renders Markdown in the buffer (headings, lists, code blocks, tables) for `markdown` files and CodeCompanion chats |
 
 ---
 
@@ -290,6 +291,12 @@ The configuration uses [CodeCompanion.nvim](https://github.com/olimorris/codecom
 | `<leader>dc` | Toggle DAP UI |
 | `<leader>di` | Hover (inspect variable value) |
 | `<leader>dr` | Open REPL |
+
+### Markdown
+
+| Key | Action |
+|-----|--------|
+| `<leader>mp` | Toggle in-buffer Markdown preview (on by default when opening a `.md` file) |
 
 ### Miscellaneous
 

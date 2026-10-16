@@ -4,149 +4,34 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-This is a Neovim configuration using lazy.nvim as the plugin manager. The configuration is modular, with core settings separated from plugin configurations. The codebase uses Vietnamese comments throughout.
+Personal Neovim config (requires Neovim >= 0.11, uses the `vim.lsp.config` / `vim.lsp.enable` API) managed with lazy.nvim. There is no build, lint, or test suite. Code comments are in Vietnamese; keep that convention. `README.md` / `README.vi.md` document installation and the user-facing plugin and keymap lists; `install.sh` / `install.ps1` are the multi-OS installers.
+
+## Commands
+
+- Verify a change loads: `nvim --headless "+Lazy! install <plugin>" +qa`, then open a relevant file and check, e.g. `nvim --headless file.md -c 'lua print(package.loaded["<module>"] ~= nil)' -c 'qa!'`.
+- Install exactly what `lazy-lock.json` records: `nvim --headless "+Lazy! restore" +qa`.
+- Avoid `Lazy! sync` / `Lazy! update` unless the user wants upgrades: they rewrite `lazy-lock.json` (tracked in git) with newer commits.
+- `:checkhealth`, `:ConformInfo`, `:LspInfo` for diagnosing tooling.
 
 ## Architecture
 
-### Entry Point and Module Loading
+`init.lua` loads, in order: `user.core.options` (also sets `mapleader`/`maplocalleader` to Space, so it must stay first), `user.core.keymaps`, then `user.plugins.config`.
 
-- `init.lua` - Main entry point that loads core modules and plugin configuration
-- Module loading order:
-  1. `user.core.options` - Global Vim options
-  2. `user.core.keymaps` - Global keybindings
-  3. `user.plugins.config` - Plugin manager setup
+`user.plugins.config` bootstraps lazy.nvim and calls `require("lazy").setup("user.plugins.list")`. lazy.nvim merges every file in `lua/user/plugins/list/` (each returns a table of plugin specs). The numeric prefix is only a grouping convention: `1_ui.lua` (theme, nvim-tree, bufferline, which-key), `2_core.lua` (conform, telescope, LSP, CodeCompanion, nvim-cmp), `3_utils.lua` (gitsigns, mini.nvim, treesitter, render-markdown). Put a new plugin in the file matching its category.
 
-### Directory Structure
+### Things that span files
 
-```
-lua/user/
-├── core/
-│   ├── options.lua  -- Global vim.opt settings
-│   └── keymaps.lua  -- Global keybindings and plugin-specific keymaps
-└── plugins/
-    ├── config.lua   -- lazy.nvim setup
-    └── list/        -- Plugin configurations (auto-loaded by lazy.nvim)
-        ├── 1_ui.lua    -- UI plugins (theme, file tree, bufferline, which-key)
-        ├── 2_core.lua  -- Core functionality (LSP, formatter, telescope, autocomplete, copilot)
-        └── 3_utils.lua -- Utilities (git, treesitter, mini.nvim)
-```
-
-### Plugin Management
-
-- Uses lazy.nvim with automatic loading from `lua/user/plugins/list/` directory
-- Plugin files return Lua tables with plugin specifications
-- Plugins are organized by category (UI, core functionality, utilities)
-- lazy.nvim automatically installs on first run if not present
-
-## Key Configuration Details
-
-### Leader Key
-- Leader: `<Space>`
-- Local leader: `<Space>`
-
-### File-Specific Settings
-- **PHP files**: Use 4 spaces for indentation (tabstop=4, shiftwidth=4)
-- **All other files**: Use 2 spaces for indentation (default in options.lua:22-23)
-
-### LSP Servers
-Configured in `lua/user/plugins/list/2_core.lua:60`:
-- `lua_ls` - Lua
-- `intelephense` - PHP
-- `ts_ls` - TypeScript/JavaScript
-- `lemminx` - XML
-
-All LSP servers are installed via Mason with `automatic_installation = true`.
-
-### Formatters
-Configured in `lua/user/plugins/list/2_core.lua:13-19`:
-- Lua: stylua
-- PHP: php_cs_fixer
-- JavaScript/TypeScript: prettierd
-- XML: prettierd
-
-Format on save is enabled with 500ms timeout and LSP fallback.
-
-### CodeCompanion.nvim Integration
-- AI assistant powered by Anthropic's Claude
-- API key configured via `ANTHROPIC_API_KEY` environment variable
-- Supports chat buffers and inline code generation
-- Used for both chat and inline strategies
-
-### Important Keybindings
-
-CodeCompanion (AI Assistant):
-- `<C-a>`: Open action palette
-- `<LocalLeader>a` (Space+a): Toggle chat buffer
-- `ga` (visual mode): Add selection to chat
-- `:cc`: Shortcut for `:CodeCompanion` command
-- `<C-s>` (in chat, insert mode): Submit message
-- `<CR>` (in chat, normal mode): Submit message
-
-File Explorer (NvimTree):
-- `<leader>e` or `<C-\>`: Find current file in tree
-- `<leader>E`: Toggle tree
-
-Telescope (Fuzzy Finder):
-- `<leader>sf`: Search files
-- `<leader>sg`: Live grep
-- `<leader><leader>`: Find buffers
-
-LSP (when attached):
-- `gd`: Goto definition
-- `gr`: Goto references
-- `K`: Hover documentation
-- `<leader>ca`: Code action
-
-Format:
-- `<leader>f`: Format file or range (normal/visual mode)
-
-Buffer Navigation:
-- `<Tab>`: Next buffer
-- `<S-Tab>`: Previous buffer
-- `,z`: Previous buffer (alternative)
-- `,x`: Next buffer (alternative)
-- `<leader>c`: Close current buffer
-
-Debugging (nvim-dap):
-- `<F3>`: Toggle breakpoint
-- `<F5>`: Continue
-- `<F6>`: Terminate
-- `<F7>`: Step into
-- `<F8>`: Step over
-- `<F9>`: Step out
-- `<F10>`: Run to cursor
+- **Keymaps are split between two places.** Global ones are in `core/keymaps.lua`; plugin ones are inside each spec's `config` or `keys`. Several are defined twice (`<leader>e`, `<leader>E`, `<leader>f`). Because nvim-tree and conform are loaded after `core/keymaps.lua` runs, the plugin-side definition wins; edit that one (for `<leader>e`, the smart toggle in `1_ui.lua`).
+- **`core/keymaps.lua` has nvim-dap mappings (`<F3>`–`<F10>`, `<leader>d*`) but no DAP plugin is installed**, and `debugHelper` does not exist in this repo. Those keys error until a DAP spec is added.
+- **LSP flow** (`2_core.lua`): servers are listed in `vim.lsp.enable({...})`; Mason installs them via `mason-lspconfig` (`automatic_installation` excludes `stylua`, which is a formatter, not an LSP). Shared capabilities come from `cmp_nvim_lsp` through `vim.lsp.config("*", ...)`. Buffer-local LSP keymaps (`gd`, `gr`, `K`, `<leader>ca`) are set in the `LspAttach` autocmd.
+- **Formatting** goes through conform (`formatters_by_ft` in `2_core.lua`) with format-on-save (500ms) and LSP fallback. The external formatter binaries (`stylua`, `php_cs_fixer`, `prettierd`) must be installed separately.
+- **Indentation**: 2 spaces globally (`core/options.lua`); PHP is overridden to 4 by a `FileType` autocmd in the LSP config.
+- **CodeCompanion** uses the Anthropic adapter and reads the key from the `ANTHROPIC_API_KEY` environment variable. `render-markdown.nvim` is also enabled for the `codecompanion` filetype so chat buffers render.
+- **Treesitter** uses nvim-treesitter's `main` branch (`master` is archived and crashes on Neovim 0.12 in markdown code-fence injections). There is no `nvim-treesitter.configs`: `3_utils.lua` installs parsers with `require("nvim-treesitter").install` and starts highlight/indent per buffer in a `FileType` autocmd. Building parsers needs the `tree-sitter` CLI, installed here via `:MasonInstall tree-sitter-cli`.
 
 ## Making Changes
 
-### Adding New Plugins
-1. Add plugin specification to appropriate file in `lua/user/plugins/list/`:
-   - UI-related → `1_ui.lua`
-   - Core functionality (LSP, formatting, searching) → `2_core.lua`
-   - Utilities → `3_utils.lua`
-2. Follow lazy.nvim specification format
-3. Include configuration in `config` function if needed
-4. Restart Neovim - lazy.nvim will auto-install
-
-### Adding New LSP Server
-1. Add server name to `servers` table in `lua/user/plugins/list/2_core.lua:60`
-2. Mason will automatically install it on next LSP attach
-3. If server needs special configuration, set it up before the loop at line 61
-
-### Adding New Formatter
-1. Add filetype and formatter(s) to `formatters_by_ft` in `lua/user/plugins/list/2_core.lua:13-19`
-2. Ensure formatter is installed (via Mason or system package manager)
-
-### Adding Global Keybindings
-Add to `lua/user/core/keymaps.lua` using `vim.keymap.set()`
-
-### Adding Plugin-Specific Keybindings
-Add within the plugin's `config` function in the appropriate list file
-
-### Configuring CodeCompanion API Key
-1. Set the `ANTHROPIC_API_KEY` environment variable in your shell profile
-2. Restart Neovim to load the environment variable
-3. Verify with `:checkhealth codecompanion`
-4. Alternatively, modify the `api_key` value in `lua/user/plugins/list/2_core.lua:104` to use a command or function
-
-### Modifying Vim Options
-Edit `lua/user/plugins/list/options.lua` using `vim.opt` assignments
+- New LSP server: add its name to `vim.lsp.enable` in `2_core.lua`; add special settings with `vim.lsp.config("<name>", {...})` before that call.
+- New formatter: add the filetype to `formatters_by_ft` in `2_core.lua` and install the binary.
+- New plugin: add a spec to the matching list file, restart Neovim, and commit the resulting `lazy-lock.json` change.
+- Update `README.md` and `README.vi.md` together when the plugin or keymap lists change.

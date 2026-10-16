@@ -26,7 +26,7 @@ powershell -ExecutionPolicy ByPass -c "irm https://raw.githubusercontent.com/nhd
 
 - **Neovim >= 0.11.0** (Recommended **v0.12+** as this config leverages modern `vim.lsp.config` and `vim.lsp.enable` APIs).
 - **Git** (for plugin management and repo cloning).
-- **C/C++ Compiler & Make**: `gcc`, `make` (for compiling Treesitter parsers and `telescope-fzf-native`).
+- **C/C++ Compiler & Make**: `gcc`, `make` (for compiling Treesitter parsers and `telescope-fzf-native`). The `tree-sitter` CLI that Treesitter also needs is installed through Mason by the commands below; parsers are compiled the first time you launch `nvim`.
 - **Search Utilities**:
   - `ripgrep` (`rg`)
   - `fd` (or `fdfind`)
@@ -63,7 +63,7 @@ If you prefer to run commands manually instead of using the automated script, fo
 4. **Initialize plugins & LSP tools**:
    ```bash
    nvim --headless "+Lazy! sync" +qa
-   nvim --headless -c "MasonInstall lua-language-server typescript-language-server intelephense lemminx stylua prettierd" -c "sleep 5" -c "qa"
+   nvim --headless -c "MasonInstall lua-language-server typescript-language-server intelephense lemminx stylua prettierd tree-sitter-cli" -c "sleep 5" -c "qa"
    ```
 
 ---
@@ -105,8 +105,11 @@ If you prefer to run commands manually instead of using the automated script, fo
 4. **Sync plugins & Mason tools**:
    ```bash
    nvim --headless "+Lazy! sync" +qa
-   nvim --headless -c "MasonInstall lua-language-server typescript-language-server intelephense lemminx stylua prettierd" -c "sleep 5" -c "qa"
+   nvim --headless -c "MasonInstall lua-language-server typescript-language-server intelephense lemminx stylua prettierd tree-sitter-cli@v0.25.10" -c "sleep 5" -c "qa"
    ```
+
+   > [!NOTE]
+   > `tree-sitter-cli` is pinned to `v0.25.10` because newer releases need glibc >= 2.39 and Ubuntu 22.04 ships 2.35. On Ubuntu 24.04+ you can drop the `@v0.25.10` suffix.
 
 ---
 
@@ -132,7 +135,7 @@ If you prefer to run commands manually instead of using the automated script, fo
 3. **Sync plugins & Mason tools**:
    ```powershell
    nvim --headless "+Lazy! sync" +qa
-   nvim --headless -c "MasonInstall lua-language-server typescript-language-server intelephense lemminx stylua prettierd" -c "sleep 5" -c "qa"
+   nvim --headless -c "MasonInstall lua-language-server typescript-language-server intelephense lemminx stylua prettierd tree-sitter-cli" -c "sleep 5" -c "qa"
    ```
 
 ---

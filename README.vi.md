@@ -26,7 +26,7 @@ powershell -ExecutionPolicy ByPass -c "irm https://raw.githubusercontent.com/nhd
 
 - **Neovim >= 0.11.0** (Khuyến nghị **v0.12+** do cấu hình sử dụng API `vim.lsp.config` và `vim.lsp.enable` mới).
 - **Git** (quản lý plugin và clone repo).
-- **C/C++ Compiler & Make**: `gcc`, `make` (để build parser Treesitter và `telescope-fzf-native`).
+- **C/C++ Compiler & Make**: `gcc`, `make` (để build parser Treesitter và `telescope-fzf-native`). `tree-sitter` CLI mà Treesitter cũng cần sẽ được cài qua Mason bằng các lệnh bên dưới; parser được build ở lần đầu mở `nvim`.
 - **Công cụ tìm kiếm**:
   - `ripgrep` (`rg`)
   - `fd` (hoặc `fd-find`)
@@ -63,7 +63,7 @@ Nếu bạn muốn tự chạy từng lệnh thay vì dùng script tự động,
 4. **Khởi tạo plugin & LSP server**:
    ```bash
    nvim --headless "+Lazy! sync" +qa
-   nvim --headless -c "MasonInstall lua-language-server typescript-language-server intelephense lemminx stylua prettierd" -c "sleep 5" -c "qa"
+   nvim --headless -c "MasonInstall lua-language-server typescript-language-server intelephense lemminx stylua prettierd tree-sitter-cli" -c "sleep 5" -c "qa"
    ```
 
 ---
@@ -105,8 +105,11 @@ Nếu bạn muốn tự chạy từng lệnh thay vì dùng script tự động,
 4. **Khởi tạo plugin & LSP server**:
    ```bash
    nvim --headless "+Lazy! sync" +qa
-   nvim --headless -c "MasonInstall lua-language-server typescript-language-server intelephense lemminx stylua prettierd" -c "sleep 5" -c "qa"
+   nvim --headless -c "MasonInstall lua-language-server typescript-language-server intelephense lemminx stylua prettierd tree-sitter-cli@v0.25.10" -c "sleep 5" -c "qa"
    ```
+
+   > [!NOTE]
+   > `tree-sitter-cli` được ghim ở `v0.25.10` vì các bản mới hơn cần glibc >= 2.39, trong khi Ubuntu 22.04 chỉ có 2.35. Trên Ubuntu 24.04 trở lên có thể bỏ hậu tố `@v0.25.10`.
 
 ---
 
@@ -132,7 +135,7 @@ Nếu bạn muốn tự chạy từng lệnh thay vì dùng script tự động,
 3. **Khởi tạo plugin & LSP server**:
    ```powershell
    nvim --headless "+Lazy! sync" +qa
-   nvim --headless -c "MasonInstall lua-language-server typescript-language-server intelephense lemminx stylua prettierd" -c "sleep 5" -c "qa"
+   nvim --headless -c "MasonInstall lua-language-server typescript-language-server intelephense lemminx stylua prettierd tree-sitter-cli" -c "sleep 5" -c "qa"
    ```
 
 ---

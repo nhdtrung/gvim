@@ -74,9 +74,15 @@ install_neovim_binary() {
 
 if [ "$OS" = "Darwin" ]; then
     info "Configuring macOS..."
+    # Treesitter parsers and telescope-fzf-native are compiled locally, which needs a C compiler
+    if ! xcode-select -p >/dev/null 2>&1; then
+        warn "Xcode Command Line Tools not found. Run 'xcode-select --install', then re-run this script."
+    fi
     if command -v brew >/dev/null 2>&1; then
         info "Installing dependencies via Homebrew..."
-        brew install neovim ripgrep fd nodejs 2>/dev/null || true
+        if ! brew install neovim ripgrep fd nodejs; then
+            warn "Homebrew reported errors (see output above). Some tools may be missing."
+        fi
     else
         warn "Homebrew not detected. Installing Neovim binary directly..."
         install_neovim_binary

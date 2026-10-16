@@ -61,7 +61,7 @@ if (Get-Command nvim -ErrorAction SilentlyContinue) {
     nvim --headless "+Lazy! sync" +qa
 
     Write-Host "`n[INFO] Installing Mason LSP servers and formatters..." -ForegroundColor Blue
-    nvim --headless -c "MasonInstall lua-language-server typescript-language-server intelephense lemminx stylua prettierd" -c "sleep 5" -c "qa"
+    nvim --headless -c "MasonInstall lua-language-server typescript-language-server intelephense lemminx stylua prettierd tree-sitter-cli" -c "sleep 5" -c "qa"
 
     Write-Host "`n==============================================" -ForegroundColor Green
     Write-Host "   GVim / Neovim Setup Complete! 🎉           " -ForegroundColor Green

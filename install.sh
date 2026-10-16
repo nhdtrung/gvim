@@ -184,7 +184,16 @@ success "Plugins synchronized."
 # 4. Install Mason LSP Servers and Formatters
 # -------------------------------------------------------------
 info "Installing Mason LSP servers and formatters..."
-nvim --headless -c "MasonInstall lua-language-server typescript-language-server intelephense lemminx stylua prettierd" -c "sleep 5" -c "qa" || true
+# tree-sitter-cli >= 0.26.1 needs glibc >= 2.39; on older glibc (e.g. Ubuntu 22.04) pin the last release that runs there
+TS_CLI="tree-sitter-cli"
+if [ "$OS" = "Linux" ]; then
+    GLIBC_VER="$(ldd --version 2>&1 | head -n1 | grep -iE 'glibc|gnu libc' | grep -oE '[0-9]+\.[0-9]+$' || true)"
+    if [ -n "$GLIBC_VER" ] && [ "$(printf '%s\n2.39\n' "$GLIBC_VER" | sort -V | head -n1)" != "2.39" ]; then
+        warn "glibc $GLIBC_VER < 2.39: pinning tree-sitter-cli to 0.25.10."
+        TS_CLI="tree-sitter-cli@v0.25.10"
+    fi
+fi
+nvim --headless -c "MasonInstall lua-language-server typescript-language-server intelephense lemminx stylua prettierd $TS_CLI" -c "sleep 5" -c "qa" || true
 success "Mason tools ready."
 
 # -------------------------------------------------------------

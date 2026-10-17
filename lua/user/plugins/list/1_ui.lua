@@ -114,6 +114,7 @@ return {
 			-- Chúng ta chỉ cần định nghĩa nhóm cho phím 's'.
 			require("which-key").register({
 				{ "s", group = "[S]earch" },
+				{ "<leader>C", group = "[C]laude Code" },
 			})
 		end,
 	},

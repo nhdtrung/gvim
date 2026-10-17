@@ -137,6 +137,24 @@ return {
 		end,
 	},
 
+	-- claudecode.nvim - Claude Code CLI trong Neovim
+	-- Dùng prefix <leader>C vì <leader>a đã gán cho CodeCompanion (tránh trễ do timeoutlen)
+	{
+		"coder/claudecode.nvim",
+		opts = { terminal = { provider = "native" } },
+		keys = {
+			{ "<leader>Cc", "<cmd>ClaudeCode<cr>", desc = "Toggle [C]laude Code" },
+			{ "<leader>Cf", "<cmd>ClaudeCodeFocus<cr>", desc = "[F]ocus Claude Code" },
+			{ "<leader>Cr", "<cmd>ClaudeCode --resume<cr>", desc = "[R]esume Claude Code" },
+			{ "<leader>CC", "<cmd>ClaudeCode --continue<cr>", desc = "[C]ontinue Claude Code" },
+			{ "<leader>Cm", "<cmd>ClaudeCodeSelectModel<cr>", desc = "Select [M]odel" },
+			{ "<leader>Cb", "<cmd>ClaudeCodeAdd %<cr>", desc = "Add current [B]uffer" },
+			{ "<leader>Cs", "<cmd>ClaudeCodeSend<cr>", mode = "v", desc = "[S]end selection" },
+			{ "<leader>Ca", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "[A]ccept diff" },
+			{ "<leader>Cd", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "[D]eny diff" },
+		},
+	},
+
 	-- Tự động hoàn thành (Autocomplete)
 	{
 		"hrsh7th/nvim-cmp",

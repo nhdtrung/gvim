@@ -27,6 +27,7 @@ Personal Neovim config (requires Neovim >= 0.11, uses the `vim.lsp.config` / `vi
 - **Formatting** goes through conform (`formatters_by_ft` in `2_core.lua`) with format-on-save (500ms) and LSP fallback. The external formatter binaries (`stylua`, `php_cs_fixer`, `prettierd`) must be installed separately.
 - **Indentation**: 2 spaces globally (`core/options.lua`); PHP is overridden to 4 by a `FileType` autocmd in the LSP config.
 - **CodeCompanion** uses the Anthropic adapter and reads the key from the `ANTHROPIC_API_KEY` environment variable. `render-markdown.nvim` is also enabled for the `codecompanion` filetype so chat buffers render.
+- **Claude Code CLI** runs inside Neovim through `coder/claudecode.nvim` (spec in `2_core.lua`, native terminal provider, no `snacks.nvim`). It needs the `claude` binary on `PATH`; diagnose with `:checkhealth claudecode`. Its keymaps use the `<leader>C` prefix because `<leader>a` is CodeCompanion's exact mapping and `timeoutlen` is 300, so never add `<leader>a*` mappings. `<C-h>`/`<C-l>` are also mapped in terminal mode (`core/keymaps.lua`) so focus can leave the Claude terminal; `<C-j>`/`<C-k>` are deliberately left to Claude's input line.
 - **Treesitter** uses nvim-treesitter's `main` branch (`master` is archived and crashes on Neovim 0.12 in markdown code-fence injections). There is no `nvim-treesitter.configs`: `3_utils.lua` installs parsers with `require("nvim-treesitter").install` and starts highlight/indent per buffer in a `FileType` autocmd. Building parsers needs the `tree-sitter` CLI, installed here via `:MasonInstall tree-sitter-cli`.
 
 ## Making Changes
@@ -34,4 +35,4 @@ Personal Neovim config (requires Neovim >= 0.11, uses the `vim.lsp.config` / `vi
 - New LSP server: add its name to `vim.lsp.enable` in `2_core.lua`; add special settings with `vim.lsp.config("<name>", {...})` before that call.
 - New formatter: add the filetype to `formatters_by_ft` in `2_core.lua` and install the binary.
 - New plugin: add a spec to the matching list file, restart Neovim, and commit the resulting `lazy-lock.json` change.
-- Update `README.md` and `README.vi.md` together when the plugin or keymap lists change.
+- Update `README.md` and `README.vi.md` together when the plugin or keymap lists change. Keep them evergreen: no "updated on <date>" notes; record user-visible changes in `CHANGELOG.md` instead.

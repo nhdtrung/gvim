@@ -10,6 +10,10 @@ keymap("n", "<C-l>", "<C-w><C-l>", { desc = "Move focus right" })
 keymap("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus down" })
 keymap("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus up" })
 
+-- Điều hướng cửa sổ từ terminal (Claude Code). Chỉ map h/l; <C-j>/<C-k> để lại cho TUI của Claude
+keymap("t", "<C-h>", "<C-\\><C-n><C-w>h", { desc = "Move focus left" })
+keymap("t", "<C-l>", "<C-\\><C-n><C-w>l", { desc = "Move focus right" })
+
 -- Phím tắt cho Cây thư mục (TÙY CHỈNH)
 keymap("n", "<leader>e", ":NvimTreeToggle<CR>", { desc = "Toggle file explorer" })
 

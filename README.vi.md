@@ -155,6 +155,10 @@ Cấu hình tích hợp [CodeCompanion.nvim](https://github.com/olimorris/codeco
      [System.Environment]::SetEnvironmentVariable("ANTHROPIC_API_KEY", "sk-ant-api...", "User")
      ```
 
+### Claude Code
+
+[claudecode.nvim](https://github.com/coder/claudecode.nvim) chạy CLI [Claude Code](https://docs.claude.com/en/docs/claude-code) trong một terminal split của Neovim. Cần cài sẵn CLI `claude` (có trong `PATH`) và đăng nhập; việc xác thực do chính CLI xử lý, không phải cấu hình này. Chạy `:checkhealth claudecode` để kiểm tra.
+
 ---
 
 ## 📂 Cấu trúc thư mục
@@ -200,6 +204,7 @@ Cấu hình tích hợp [CodeCompanion.nvim](https://github.com/olimorris/codeco
 | `neovim/nvim-lspconfig` + Mason | LSP tự động cài qua Mason: `lua_ls`, `intelephense`, `ts_ls`, `lemminx` |
 | `hrsh7th/nvim-cmp` | Autocomplete với snippet (LuaSnip) và LSP source |
 | `olimorris/codecompanion.nvim` | AI assistant dùng Claude (Anthropic) — chat buffer & inline generation |
+| `coder/claudecode.nvim` | Tích hợp Claude Code CLI — terminal split, gửi buffer/vùng chọn làm ngữ cảnh, duyệt diff ngay trong Neovim |
 
 ### Utils (`3_utils.lua`)
 
@@ -262,7 +267,7 @@ Cấu hình tích hợp [CodeCompanion.nvim](https://github.com/olimorris/codeco
 
 | Phím | Tác dụng |
 |------|----------|
-| `<C-h/j/k/l>` | Di chuyển focus giữa các split |
+| `<C-h/j/k/l>` | Di chuyển focus giữa các split (`<C-h>`/`<C-l>` dùng được cả khi đang ở trong terminal như Claude Code) |
 | `vv` | Split màn hình theo chiều dọc |
 | `ss` | Split màn hình theo chiều ngang |
 
@@ -276,6 +281,19 @@ Cấu hình tích hợp [CodeCompanion.nvim](https://github.com/olimorris/codeco
 | `:cc` | Shortcut cho `:CodeCompanion` |
 | `<C-s>` (insert, trong chat) | Gửi message |
 | `<CR>` (normal, trong chat) | Gửi message |
+
+### Claude Code
+
+| Phím | Tác dụng |
+|------|----------|
+| `<leader>Cc` | Bật/tắt terminal Claude Code |
+| `<leader>Cf` | Focus vào terminal Claude Code |
+| `<leader>Cr` | Mở lại một session cũ |
+| `<leader>CC` | Tiếp tục session gần nhất |
+| `<leader>Cm` | Chọn model |
+| `<leader>Cb` | Thêm buffer hiện tại vào ngữ cảnh |
+| `<leader>Cs` (visual) | Gửi vùng chọn cho Claude |
+| `<leader>Ca` / `<leader>Cd` | Chấp nhận / từ chối diff đang chờ |
 
 ### Debugging (nvim-dap)
 

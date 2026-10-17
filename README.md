@@ -155,6 +155,10 @@ The configuration uses [CodeCompanion.nvim](https://github.com/olimorris/codecom
      [System.Environment]::SetEnvironmentVariable("ANTHROPIC_API_KEY", "sk-ant-api...", "User")
      ```
 
+### Claude Code
+
+[claudecode.nvim](https://github.com/coder/claudecode.nvim) runs the [Claude Code](https://docs.claude.com/en/docs/claude-code) CLI in a Neovim terminal split. Install the `claude` CLI and log in first (`claude` on your `PATH`); authentication is handled by the CLI itself, not by this config. Run `:checkhealth claudecode` to verify.
+
 ---
 
 ## 📂 Directory Structure
@@ -200,6 +204,7 @@ The configuration uses [CodeCompanion.nvim](https://github.com/olimorris/codecom
 | `neovim/nvim-lspconfig` + Mason | LSP management & config: `lua_ls`, `intelephense`, `ts_ls`, `lemminx` |
 | `hrsh7th/nvim-cmp` | Autocompletion engine with LuaSnip snippets & LSP source |
 | `olimorris/codecompanion.nvim` | AI assistant with Claude (Anthropic) — chat buffer & inline generation |
+| `coder/claudecode.nvim` | Claude Code CLI integration — terminal split, send buffer/selection as context, native diff review |
 
 ### Utilities (`3_utils.lua`)
 
@@ -262,7 +267,7 @@ The configuration uses [CodeCompanion.nvim](https://github.com/olimorris/codecom
 
 | Key | Action |
 |-----|--------|
-| `<C-h/j/k/l>` | Navigate focus between splits |
+| `<C-h/j/k/l>` | Navigate focus between splits (`<C-h>`/`<C-l>` also work from inside a terminal such as Claude Code) |
 | `vv` | Vertical split |
 | `ss` | Horizontal split |
 
@@ -276,6 +281,19 @@ The configuration uses [CodeCompanion.nvim](https://github.com/olimorris/codecom
 | `:cc` | Command shortcut for `:CodeCompanion` |
 | `<C-s>` (insert, in chat) | Submit message |
 | `<CR>` (normal, in chat) | Submit message |
+
+### Claude Code
+
+| Key | Action |
+|-----|--------|
+| `<leader>Cc` | Toggle Claude Code terminal |
+| `<leader>Cf` | Focus Claude Code terminal |
+| `<leader>Cr` | Resume a previous session |
+| `<leader>CC` | Continue the last session |
+| `<leader>Cm` | Select model |
+| `<leader>Cb` | Add current buffer to context |
+| `<leader>Cs` (visual) | Send selection to Claude |
+| `<leader>Ca` / `<leader>Cd` | Accept / deny the pending diff |
 
 ### Debugging (nvim-dap)
 
